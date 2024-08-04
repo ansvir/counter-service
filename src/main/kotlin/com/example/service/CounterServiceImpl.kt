@@ -2,7 +2,6 @@ package com.example.service
 
 import com.example.model.counters.CountersRepository
 import io.ktor.server.plugins.*
-import org.h2.jdbc.JdbcBatchUpdateException
 
 class CounterServiceImpl(private val countersRepository: CountersRepository) : CountersService {
 
@@ -34,13 +33,8 @@ class CounterServiceImpl(private val countersRepository: CountersRepository) : C
             throw IllegalArgumentException("Not more than 1 counter can be created.")
         }
         val first = counter.entries.firstOrNull()
-            ?: throw IllegalArgumentException("There is no counter provided")
-        try {
-            val newCounter = countersRepository.create(first.toPair())
-            if (!newCounter) {
-                throw RuntimeException("Counter was not created. See server logs for more details.")
-            }
-        } catch (ex: JdbcBatchUpdateException) {
+            ?: throw IllegalArgumentException("There is no counter provided.")
+        if (!countersRepository.create(first.toPair())) {
             throw RuntimeException("Counter already exist or internal server error occurred. Use CounterService#get(String) to check for counter existence.")
         }
     }

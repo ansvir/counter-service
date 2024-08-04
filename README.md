@@ -24,5 +24,8 @@ In project root with Gradle >= 8.4 installed:
 ```
 
 ## Service security
-1) Access service with https://localhost:88 for TLS connection
+1) Access service with https://localhost:88 for TLS connection with self issued certificate
 2) Access service with http://localhost:8080 for insecure connection
+
+## Service OpenAPI
+Access service Swagger documentation by https://localhost:88/swagger or http://localhost:8080/swagger

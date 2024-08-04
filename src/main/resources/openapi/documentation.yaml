@@ -1,0 +1,190 @@
+openapi: 3.1.0
+info:
+  title: Counter service API
+  description: Counter service API
+  version: 1.0.0
+servers:
+  - url: https://localhost:88
+  - url: http://localhost:8080
+paths:
+  /GetAll:
+    get:
+      summary: Get all counters
+      responses:
+        '200':
+          description: All counters successful retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Retrieved Response:
+                  value:
+                    counter1: 0
+                    counter2: 20
+                    counter3: 50
+  /Get:
+    get:
+      summary: Gets a counter value
+      parameters:
+        - name: counter
+          description: Existing counter's name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Counter value successfully retrieved by name
+          content:
+            text/plain:
+              schema:
+                type: integer
+              examples:
+                Read Response:
+                  value: 50
+        '400':
+          description: Counter name parameter was not specified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                Missing Counter Name Response:
+                  value:
+                    message: "'counter' parameter was not specified."
+        '404':
+          description: Counter was not found by provided name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                No Counter by Name Response:
+                  value:
+                    message: "Counter was not found by name."
+  /Create:
+    post:
+      summary: Creates a counter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                counterName:
+                  type: integer
+      responses:
+        '201':
+          description: Counter successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                Created Response:
+                  value:
+                    message: "Counter successfully created."
+        '400':
+          description: Less than or more than one counters where passed to request body, counter already exist or internal server error happened. For details, see response message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                More than 1 Counter Response:
+                  value:
+                    message: "Not more than 1 counter can be created."
+                No Counter Response:
+                  value:
+                    message: "There is no counter provided."
+                Internal Error Response:
+                  value:
+                    message: "Counter already exist or internal server error occurred. Use CounterService#get(String) to check for counter existence."
+  /Delete:
+    delete:
+      summary: Deletes a counter
+      parameters:
+        - name: counter
+          description: Existing counter's name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Counter successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                Deleted Response:
+                  value:
+                    message: "Counter successfully deleted."
+        '400':
+          description: Missing counter parameter in request URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                Missing Counter Name Response:
+                  value:
+                    message: "'counter' parameter was not specified."
+        '404':
+          description: Counter was not found by provided name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                No Counter by Name Response:
+                  value:
+                    message: "Counter was not found by name."
+  /Increment:
+    put:
+      summary: Increments a counter by 1
+      parameters:
+        - name: counter
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Counter successfully incremented
+          content:
+            text/plain:
+              schema:
+                type: integer
+              examples:
+                Counter Incremented Response:
+                  value: 51
+        '400':
+          description: Missing counter parameter in request URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                Missing Counter Name Response:
+                  value:
+                    message: "'counter' parameter was not specified."
+        '404':
+          description: No counter found by provided name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+              examples:
+                No Counter by Name Response:
+                  value:
+                    message: "Counter was not found by name."
+components:
+  schemas:
+    ResponseMessage:
+      type: object
+      properties:
+        message:
+          type: string
